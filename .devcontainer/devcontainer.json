@@ -1,0 +1,17 @@
+{
+  "name": "KWI Python Course",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "postCreateCommand": "python -m pip install --upgrade pip && pip install ipykernel jupyter && python -m ipykernel install --user --name course --display-name \"Course Python\"",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "jupyter.jupyterServerType": "local"
+      }
+    }
+  }
+}
