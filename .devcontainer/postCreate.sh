@@ -1,61 +1,97 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
-# ---- Pick Python
-PY="/usr/local/python/current/bin/python"
-if [[ ! -x "$PY" ]]; then
-  PY="$(command -v python3 || true)"
-fi
-if [[ -z "${PY:-}" ]]; then
-  echo "ERROR: python3 not found"
+echo "=== postCreate: starting as $(whoami) in $(pwd)"
+
+# --------- 1) Locate python
+PY_CANDIDATES=(
+  "/usr/local/python/current/bin/python"
+  "$(command -v python3 || true)"
+  "$(command -v python || true)"
+)
+
+PY=""
+for c in "${PY_CANDIDATES[@]}"; do
+  if [[ -n "${c:-}" && -x "${c:-}" ]]; then
+    PY="$c"
+    break
+  fi
+done
+
+if [[ -z "$PY" ]]; then
+  echo "ERROR: No python found. Candidates: ${PY_CANDIDATES[*]}"
   exit 1
 fi
 
-# ---- Python packages
-"$PY" -m pip install --upgrade pip
-"$PY" -m pip show ipykernel >/dev/null 2>&1 || "$PY" -m pip install ipykernel
+echo "=== postCreate: using python: $PY"
+"$PY" --version || true
 
-# ---- Register a stable kernel (idempotent)
-"$PY" -m ipykernel install --user \
+# --------- 2) Always use a venv in the workspace (avoids permission/externally-managed issues)
+VENV_DIR="${VENV_DIR:-${PWD}/.venv}"
+echo "=== postCreate: creating venv at $VENV_DIR"
+"$PY" -m venv "$VENV_DIR"
+
+VENV_PY="${VENV_DIR}/bin/python"
+if [[ ! -x "$VENV_PY" ]]; then
+  echo "ERROR: venv python not found at $VENV_PY"
+  exit 1
+fi
+
+echo "=== postCreate: venv python: $VENV_PY"
+"$VENV_PY" -m pip install --upgrade pip setuptools wheel
+
+# --------- 3) Jupyter kernel + ipyturtle3
+"$VENV_PY" -m pip show ipykernel >/dev/null 2>&1 || "$VENV_PY" -m pip install ipykernel
+
+# Register kernel (idempotent-ish: reinstall is fine)
+"$VENV_PY" -m ipykernel install --user \
   --name "workspace-python" \
   --display-name "Python (Workspace)"
 
-# ---- Install editor extensions (works for code-server and VS Code server variants)
-install_ext () {
-  local ext="$1"
-  local cli=""
-
+# --------- 4) Install editor extensions if a CLI is available
+pick_editor_cli () {
   if command -v code-server >/dev/null 2>&1; then
-    cli="code-server"
-  elif command -v code >/dev/null 2>&1; then
-    cli="code"
-  elif [[ -x "${HOME}/.local/bin/code-server" ]]; then
-    cli="${HOME}/.local/bin/code-server"
-  fi
-
-  if [[ -z "$cli" ]]; then
-    echo "No code/code-server CLI found; skipping extension install for $ext"
+    echo "code-server"
     return 0
   fi
+  if command -v code >/dev/null 2>&1; then
+    echo "code"
+    return 0
+  fi
+  if [[ -x "/tmp/code-server/bin/code-server" ]]; then
+    echo "/tmp/code-server/bin/code-server"
+    return 0
+  fi
+  echo ""
+}
 
-  if "$cli" --list-extensions 2>/dev/null | grep -qx "$ext"; then
+CLI="$(pick_editor_cli)"
+echo "=== postCreate: editor CLI: ${CLI:-<none>}"
+
+install_ext () {
+  local ext="$1"
+  if [[ -z "${CLI:-}" ]]; then
+    echo "Skipping extension install (no CLI): $ext"
+    return 0
+  fi
+  if "$CLI" --list-extensions 2>/dev/null | grep -qx "$ext"; then
     echo "Extension already installed: $ext"
   else
-    "$cli" --install-extension "$ext"
+    echo "Installing extension: $ext"
+    "$CLI" --install-extension "$ext" || echo "WARN: failed to install $ext (continuing)"
   fi
 }
 
 install_ext ms-python.python
 install_ext ms-toolsai.jupyter
-install_ext ms-python.vscode-pylance
-install_ext donjayamanne.vscode-default-python-kernel
 
-# ---- Force settings where code-server expects them
+# --------- 5) Force settings so notebooks use the venv python automatically
+# code-server user settings
 CS_USER_DIR="${HOME}/.local/share/code-server/User"
 mkdir -p "$CS_USER_DIR"
 cat > "${CS_USER_DIR}/settings.json" <<EOF
 {
-  "python.defaultInterpreterPath": "${PY}",
+  "python.defaultInterpreterPath": "${VENV_PY}",
   "jupyter.jupyterServerType": "local",
   "jupyter.kernels.excludePythonEnvironments": [
     "/usr/bin/python",
@@ -66,14 +102,14 @@ cat > "${CS_USER_DIR}/settings.json" <<EOF
 }
 EOF
 
-# ---- Also set VS Code server machine settings (harmless if unused)
+# VS Code server machine settings (harmless if unused)
 VSC_MACHINE_DIR="${HOME}/.vscode-server/data/Machine"
 mkdir -p "$VSC_MACHINE_DIR"
 cat > "${VSC_MACHINE_DIR}/settings.json" <<EOF
 {
-  "python.defaultInterpreterPath": "${PY}",
+  "python.defaultInterpreterPath": "${VENV_PY}",
   "jupyter.jupyterServerType": "local"
 }
 EOF
 
-echo "postCreate complete."
+echo "=== postCreate: done"
