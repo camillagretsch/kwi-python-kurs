@@ -3,6 +3,14 @@
   "features": {
   "ghcr.io/devcontainers/features/python:latest": {}
   },
+  "dev.containers.defaultExtensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter"
+  ],
+  "extensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
@@ -10,6 +18,7 @@
         "ms-toolsai.jupyter"
       ],
       "settings": {
+        "extensions.verifySignature": false,
         "python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
         "jupyter.jupyterServerType": "local",
 
