@@ -1,20 +1,13 @@
 {
   "name": "KWI Python Course",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-
   "features": {
-    "ghcr.io/devcontainers/features/python:latest": {
-      "version": "latest",
-      "installTools": false
-    }
+  "ghcr.io/devcontainers/features/python:latest": {}
   },
-
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-toolsai.jupyter",
-        "donjayamanne.vscode-default-python-kernel"
+        "ms-toolsai.jupyter"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
