@@ -3,7 +3,6 @@
   "features": {
   "ghcr.io/devcontainers/features/python:latest": {}
   },
- "postCreateCommand": "bash .devcontainer/postCreate.sh",
   "customizations": {
     "vscode": {
       "extensions": [
