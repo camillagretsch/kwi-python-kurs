@@ -3,14 +3,7 @@
   "features": {
   "ghcr.io/devcontainers/features/python:latest": {}
   },
-  "dev.containers.defaultExtensions": [
-    "ms-python.python",
-    "ms-toolsai.jupyter"
-  ],
-  "extensions": [
-    "ms-python.python",
-    "ms-toolsai.jupyter"
-  ],
+ "postCreateCommand": "bash .devcontainer/postCreate.sh",
   "customizations": {
     "vscode": {
       "extensions": [
