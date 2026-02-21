@@ -1,16 +1,32 @@
 {
   "name": "KWI Python Course",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "postCreateCommand": "python -m pip install --upgrade pip && pip install ipykernel jupyter && python -m ipykernel install --user --name course --display-name \"Course Python\"",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+
+  "features": {
+    "ghcr.io/devcontainers/features/python:latest": {
+      "version": "latest",
+      "installTools": false
+    }
+  },
+
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "donjayamanne.vscode-default-python-kernel"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "jupyter.jupyterServerType": "local"
+        "python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
+        "jupyter.jupyterServerType": "local",
+
+        // Helps avoid “Select Kernel” prompts if an OS Python also exists:
+        "jupyter.kernels.excludePythonEnvironments": [
+          "/usr/bin/python",
+          "/usr/bin/python3",
+          "/bin/python",
+          "/bin/python3"
+        ]
       }
     }
   }
