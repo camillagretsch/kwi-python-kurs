@@ -3,6 +3,7 @@
   "features": {
   "ghcr.io/devcontainers/features/python:latest": {}
   },
+  "postCreateCommand": "PY=/usr/local/python/current/bin/python; [ -x \"$PY\" ] || PY=$(command -v python3 || command -v python); $PY -m pip install -U --user ipykernel jupyter && $PY -m ipykernel install --user --name python312 --display-name \"Python 3.12 (Course)\"",
   "customizations": {
     "vscode": {
       "extensions": [
