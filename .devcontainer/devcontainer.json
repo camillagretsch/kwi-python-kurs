@@ -3,7 +3,7 @@
   "features": {
   "ghcr.io/devcontainers/features/python:latest": {}
   },
-  "postCreateCommand": "PY=/usr/local/python/current/bin/python; [ -x \"$PY\" ] || PY=$(command -v python3 || command -v python); $PY -m pip install -U --user ipykernel jupyter && $PY -m ipykernel install --user --name python312 --display-name \"Python 3.12 (Course)\"",
+  "postCreateCommand": "bash -lc 'set -euo pipefail; PY=/usr/local/python/current/bin/python; if [ ! -x \"$PY\" ]; then PY=$(command -v python3 || command -v python); fi; echo \"Using $PY\"; $PY -m pip install -U --user ipykernel jupyter; $PY -m ipykernel install --user --name python312 --display-name \"Python 3.12 (Course)\"'",
   "customizations": {
     "vscode": {
       "extensions": [
