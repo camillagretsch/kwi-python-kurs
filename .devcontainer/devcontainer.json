@@ -1,3 +1,27 @@
 {
-  "name": "KWI Python Course"
+  "name": "KWI Python Course",
+  "features": {
+  "ghcr.io/devcontainers/features/python:latest": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "extensions.verifySignature": false,
+        "python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
+        "jupyter.jupyterServerType": "local",
+
+        // Helps avoid “Select Kernel” prompts if an OS Python also exists:
+        "jupyter.kernels.excludePythonEnvironments": [
+          "/usr/bin/python",
+          "/usr/bin/python3",
+          "/bin/python",
+          "/bin/python3"
+        ]
+      }
+    }
+  }
 }
