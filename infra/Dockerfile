@@ -13,22 +13,23 @@ RUN apt-get update \
     locales \
  && rm -rf /var/lib/apt/lists/*
 
-# Jupyter + ipykernel
+# Jupyter + ipykernel   
 RUN pip3 install --no-cache-dir \
-      jupyter \
-      ipykernel \
-      notebook \
-      jupyterlab
+    jupyter \
+    ipykernel \
+    notebook \
+    jupyterlab \
+    ipyturtle3
 
 # Create non root user "coder"
 RUN useradd -ms /bin/bash coder \
  && echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
+ 
 USER coder
 
-RUN mkdir "/home/coder/project"
-
 WORKDIR /home/coder
+
+RUN mkdir -p /home/coder/project
 
 # Register default Python kernel for Jupyter / VS Code
 RUN python3 -m ipykernel install --user --name "python3" --display-name "Python 3"
