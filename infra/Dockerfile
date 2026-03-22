@@ -41,6 +41,3 @@ WORKDIR /home/coder
 RUN mkdir -p /home/coder/project
 
 RUN python3 -m ipykernel install --user --name "python3" --display-name "Python 3"
-
-# Register default Python kernel for Jupyter / VS Code
-RUN python3 -m ipykernel install --user --name "python3" --display-name "Python 3"
