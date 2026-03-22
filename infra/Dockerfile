@@ -26,10 +26,6 @@ RUN pip3 install --no-cache-dir \
 RUN useradd -ms /bin/bash coder \
  && echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# VSIX-Dateien ins Image legen
-COPY ms-python.python.vsix /opt/extensions/
-COPY ms-toolsai.jupyter.vsix /opt/extensions/
-
 USER coder
 
 WORKDIR /home/coder
