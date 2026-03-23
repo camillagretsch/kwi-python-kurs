@@ -1,8 +1,5 @@
 FROM codercom/enterprise-base:ubuntu
 
-# Run below commands as root user
-USER root
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Basic tools and Python
