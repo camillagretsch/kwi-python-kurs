@@ -1,37 +1,40 @@
 FROM codercom/enterprise-base:ubuntu
 
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Run below commands as root user
 USER root
 
-# Basic tools and Python
-RUN apt-get update \
- && apt-get install -y \
-    python3 \
-    python3-tk \
-    python3-pip \
-    git \
-    curl \
-    sudo \
-    locales \
- && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Download and install VS Code extensions into the container
+# Basic tools and Python
+RUN apt-get update && apt-get install -y \
+  python3 \
+  python3-venv \
+  python3-pip \
+  python3-tk \
+  git \
+  curl \
+  sudo \
+  locales \
+  && rm -rf /var/lib/apt/lists/*
+  
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Jupyter + ipykernel 
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+      jupyter \
+      ipykernel \
+      notebook \
+      jupyterlab \
+      ipyturtle3
+
 RUN mkdir -p /vsix
 ADD ./ms-toolsai.jupyter-2023.8.1002501831.vsix /vsix
 ADD ./ms-python.python-2024.8.1.vsix /vsix
 
 USER coder
 
-# Jupyter + ipykernel   
-RUN pip3 install --no-cache-dir \
-    jupyter \
-    ipykernel \
-    notebook \
-    jupyterlab \
-    ipyturtle3
-    
 WORKDIR /home/coder
 
 RUN mkdir -p /home/coder/project
