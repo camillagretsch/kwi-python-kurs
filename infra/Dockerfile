@@ -22,10 +22,6 @@ RUN mkdir -p /vsix
 ADD ./ms-toolsai.jupyter-2023.8.1002501831.vsix /vsix
 ADD ./ms-python.python-2024.8.1.vsix /vsix
 
-# Create non root user "coder"
-RUN useradd -ms /bin/bash coder \
- && echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
 USER coder
 
 # Jupyter + ipykernel   
