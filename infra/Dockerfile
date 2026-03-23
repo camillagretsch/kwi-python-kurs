@@ -34,6 +34,7 @@ ADD ./ms-toolsai.jupyter-2023.8.1002501831.vsix /vsix
 ADD ./ms-python.python-2024.8.1.vsix /vsix
 
 USER coder
+RUN code-server --install-extension eamodio.gitlens
 
 WORKDIR /home/coder
 
