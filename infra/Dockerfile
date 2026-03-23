@@ -2,6 +2,9 @@ FROM codercom/enterprise-base:ubuntu
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Run below commands as root user
+USER root
+
 # Basic tools and Python
 RUN apt-get update \
  && apt-get install -y \
@@ -14,14 +17,6 @@ RUN apt-get update \
     locales \
  && rm -rf /var/lib/apt/lists/*
 
-# Jupyter + ipykernel   
-RUN pip3 install --no-cache-dir \
-    jupyter \
-    ipykernel \
-    notebook \
-    jupyterlab \
-    ipyturtle3
-
 # Download and install VS Code extensions into the container
 RUN mkdir -p /vsix
 ADD ./ms-toolsai.jupyter-2023.8.1002501831.vsix /vsix
@@ -33,6 +28,14 @@ RUN useradd -ms /bin/bash coder \
 
 USER coder
 
+# Jupyter + ipykernel   
+RUN pip3 install --no-cache-dir \
+    jupyter \
+    ipykernel \
+    notebook \
+    jupyterlab \
+    ipyturtle3
+    
 WORKDIR /home/coder
 
 RUN mkdir -p /home/coder/project
