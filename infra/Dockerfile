@@ -39,4 +39,7 @@ WORKDIR /home/coder
 
 RUN mkdir -p /home/coder/project
 
-RUN python3 -m ipykernel install --user --name "python3" --display-name "Python 3"
+# Kernel explizit aus dem venv registrieren
+RUN /opt/venv/bin/python -m ipykernel install --user \
+    --name kwi-python \
+    --display-name "Python (KWI)"
