@@ -1,0 +1,5 @@
+# VS Code Remote extensions (persisted via symlink)
+.vscode-server/
+
+# optional zusätzlich:
+.vscode/
