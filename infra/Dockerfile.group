@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
       jupyter \
       ipykernel \
-      notebook \
+      notebook
 
 # Projektordner vorbereiten
 RUN mkdir -p /home/coder/project && \
