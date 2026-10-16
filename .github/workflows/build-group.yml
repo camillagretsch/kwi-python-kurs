@@ -1,0 +1,38 @@
+name: Build Coder Group Image
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  VERSION: group-1.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build group image
+        run: |
+          docker build \
+            -f infra/Dockerfile.group \
+            -t $REGISTRY/${IMAGE_NAME}:${VERSION} \
+            infra/
+
+      - name: Push group image
+        run: |
+          docker push $REGISTRY/${IMAGE_NAME}:${VERSION}
